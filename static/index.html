@@ -1,0 +1,8 @@
+<script type="text/javascript">
+    socket = new WebSocket('ws://localhost:8001/socket');
+    socket.onmessage= function(event) {
+        document.getElementById("counter").innerHTML = event.data;
+    };
+</script>
+
+Completes: <span id="counter">0</div>
