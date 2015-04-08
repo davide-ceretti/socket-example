@@ -1,29 +1,33 @@
+import os
+
 import pika
 
-from flask import Flask
-from flask_sockets import Sockets
+from banter_wsgi import View, App, Response
 
-app = Flask(__name__)
-app.debug = True
-sockets = Sockets(app)
+connection = pika.BlockingConnection(
+    pika.ConnectionParameters('localhost')
+)
 
-
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
+channel = connection.channel()
 
 
-@sockets.route('/socket')
-def echo_socket(ws):
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters('rabbit')
-    )
+class Index(View):
+    def get(self):
+        return Response(
+            open('static/index.html').read(),
+            content_type="text/html"
+        )
 
-    channel = connection.channel()
-    channel.queue_declare(queue='completes')
+    def websocket(self):
+        for method, properties, body in channel.consume("completes"):
+            yield str(body)
 
-    def callback(ch, method, properties, body):
-        ws.send(body)
+routes = [
+    ('/', 'index', Index),
+]
 
-    channel.basic_consume(callback, queue='completes', no_ack=True)
-    channel.start_consuming()
+app = App(routes)
+
+
+if __name__ == "__main__":
+    app.run(('', int(os.getenv('PORT', 8000))))
