@@ -2,7 +2,7 @@
 <html class="">
 <head>
 <script type="text/javascript">
-    socket = new WebSocket('ws://localhost:8000');
+    socket = new WebSocket('ws://localhost:{{PORT}}');
     socket.onmessage= function(event) {
         document.getElementById("counter").innerHTML = event.data;
     };
@@ -10,6 +10,8 @@
 </head>
 
 <body>
-Completes: <span id="counter">0</span>
+<div style="font-size: 24px">
+    Completes: <span id="counter">0</span>
+</div>
 </body>
 </html>

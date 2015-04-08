@@ -8,4 +8,4 @@ Requirements:
 
 * ```python add_messages.py``` Add some messages to the rabbitmq container on the queue "completes" every half second
 
-* ```python api.py``` Run the api (http://localhost:8000/)
+* ```python api.py <port>``` Run the api
